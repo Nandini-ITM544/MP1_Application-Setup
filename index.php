@@ -10,13 +10,18 @@
     <input type="hidden" name="MAX_FILE_SIZE" value="3000000" />
    
     Send this file: <input name="userfile" type="file" /><br />
+<br>
+<br>
 Enter Email of user: <input type="email" name="useremail"><br />
+<br>
+<br>
 Enter Phone of user (1-XXX-XXX-XXXX): <input type="phone" name="phone">
-
+<br>
+<br>
 
 <input type="submit" value="Send File" />
 </form>
-<hr />
+
 
 <form enctype="multipart/form-data" action="gallery.php" method="POST">
     
