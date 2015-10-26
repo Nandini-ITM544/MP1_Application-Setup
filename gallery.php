@@ -1,5 +1,8 @@
 <html>
-<head><title>Gallery</title>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<title>Gallery</title>
 </head>
 <body>
 
