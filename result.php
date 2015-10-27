@@ -16,43 +16,47 @@ echo 'Here is some more debugging info:';
 print_r($_FILES);
 print "</pre>";
 require 'vendor/autoload.php';
-#use Aws\S3\S3Client;
-#$client = S3Client::factory();
-$s3 = new Aws\S3\S3Client([
-    'version' => 'latest',
-    'region'  => 'us-west-2'
-]);
+use Aws\S3\S3Client;
+$client = S3Client::factory();
+#$s3 = new Aws\S3\S3Client([
+ #   'version' => 'latest',
+ #   'region'  => 'us-west-2'
+#]);
 $bucket = uniqid("NandiniMp1",false);
-#$result = $client->createBucket(array(
-#    'Bucket' => $bucket
-#));
-# AWS PHP SDK version 3 create bucket
-$result = $s3->createBucket([
-    'ACL' => 'public-read',
+$result = $client->createBucket(array(
     'Bucket' => $bucket
-]);
-#$client->waitUntilBucketExists(array('Bucket' => $bucket));
-#Old PHP SDK version 2
-#$key = $uploadfile;
-#$result = $client->putObject(array(
+));
+# AWS PHP SDK version 3 create bucket
+#$result = $s3->createBucket([
 #    'ACL' => 'public-read',
-#    'Bucket' => $bucket,
-#    'Key' => $key,
-#    'SourceFile' => $uploadfile 
-#));
-# PHP version 3
-$result = $s3->putObject([
+#    'Bucket' => $bucket
+#]);
+$client->waitUntilBucketExists(array('Bucket' => $bucket));
+#Old PHP SDK version 2
+$key = $uploadfile;
+$result = $client->putObject(array(
     'ACL' => 'public-read',
     'Bucket' => $bucket,
-   'Key' => $uploadfile
-]);  
+    'Key' => $key,
+    'SourceFile' => $uploadfile 
+));
+# PHP version 3
+#$result = $s3->putObject([
+#    'ACL' => 'public-read',
+#    'Bucket' => $bucket,
+#   'Key' => $uploadfile
+#]);  
 $url = $result['ObjectURL'];
 echo $url;
-$rds = new Aws\Rds\RdsClient([
-    'version' => 'latest',
-    'region'  => 'us-west-2'
-]);
-$result = $rds->describeDBInstances([
+use Aws\Rds\RdsClient;
+$client = RedClient::factory(array(
+'region' => 'us-west-2'
+));
+#$rds = new Aws\Rds\RdsClient([
+#    'version' => 'latest',
+#    'region'  => 'us-west-2'
+#]);
+$result = $client->describeDBInstances(array(
     'DBInstanceIdentifier' => 'MP1db',
     #'Filters' => [
     #    [
@@ -63,9 +67,13 @@ $result = $rds->describeDBInstances([
    # ],
    # 'Marker' => '<string>',
    # 'MaxRecords' => <integer>,
-]);
-$endpoint = $result['DBInstances']['Endpoint']['Address']
-    echo "============\n". $endpoint . "================";^M
+));
+$endpoint=" ";
+#$endpoint = $result['DBInstances']['Endpoint']['Address']
+foreach ($result->getPath('DBInstances/*/Endpoint/Address') as $ep){
+echo $ep;
+$endpint=$ep;
+} 
 //echo "begin database";^M
 $link = mysqli_connect($endpoint,"nandini90","nandini90","MP1db") or die("Error " . mysqli_error($link));
 /* check connection */
@@ -80,11 +88,11 @@ if (!($stmt = $link->prepare("INSERT INTO Project1 (uname,email,phoneforsms,raws
 $uname="Nandini";
 $email = $_POST['useremail'];
 $phoneforsms = $_POST['phone'];
-$raws3url = $url; //  $result['ObjectURL']; from above
+$raws3url = $url; //  $result['ObjectURL']; fr
 $finisheds3url = "none";
 $jpegfilename = basename($_FILES['userfile']['name']);
 $state=0;
-$datetime=now();
+$datetime=now(;
 $stmt->bind_param($uname,$email,$phoneforsms,$raws3url,$finisheds3url,$jpegfilename,$state,$datetime);
 if (!$stmt->execute()) {
     echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
