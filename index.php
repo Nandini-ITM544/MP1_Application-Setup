@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <html>
 <head><title>Hello app</title>
+<meta charset="utf-8">
 </head>
 <body>
 
