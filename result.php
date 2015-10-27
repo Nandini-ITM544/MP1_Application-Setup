@@ -41,7 +41,7 @@ $result = $s3->createBucket([
 #    'SourceFile' => $uploadfile 
 #));
 # PHP version 3
-$result = $client->putObject([
+$result = $s3->putObject([
     'ACL' => 'public-read',
     'Bucket' => $bucket,
    'Key' => $uploadfile
@@ -50,10 +50,10 @@ $url = $result['ObjectURL'];
 echo $url;
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
-    'region'  => 'us-east-1'
+    'region'  => 'us-west-2'
 ]);
 $result = $rds->describeDBInstances([
-    'DBInstanceIdentifier' => 'MP1',
+    'DBInstanceIdentifier' => 'MP1db',
     #'Filters' => [
     #    [
     #        'Name' => '<string>', // REQUIRED
@@ -67,14 +67,14 @@ $result = $rds->describeDBInstances([
 $endpoint = $result['DBInstances']['Endpoint']['Address']
     echo "============\n". $endpoint . "================";^M
 //echo "begin database";^M
-$link = mysqli_connect($endpoint,"nandini90","nandini90","MP1") or die("Error " . mysqli_error($link));
+$link = mysqli_connect($endpoint,"nandini90","nandini90","MP1db") or die("Error " . mysqli_error($link));
 /* check connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
 }
 /* Prepared statement, stage 1: prepare */
-if (!($stmt = $link->prepare("INSERT INTO Project1 (uname,phoneforsms,raws3url,finisheds3url,jpegfilename,state,datetime) VALUES (NULL,?,?,?,?,?,?,?)"))) {
+if (!($stmt = $link->prepare("INSERT INTO Project1 (uname,email,phoneforsms,raws3url,finisheds3url,jpegfilename,state,datetime) VALUES (?,?,?,?,?,?,?,?)"))) {
     echo "Prepare failed: (" . $link->errno . ") " . $link->error;
 }
 $uname="Nandini";
