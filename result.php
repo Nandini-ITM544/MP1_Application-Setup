@@ -20,9 +20,9 @@ require 'vendor/autoload.php';
 #$client = S3Client::factory();
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
-    'region'  => 'us-east-1'
+    'region'  => 'us-west-2'
 ]);
-$bucket = uniqid("php-jrh-",false);
+$bucket = uniqid("NandiniMp1",false);
 #$result = $client->createBucket(array(
 #    'Bucket' => $bucket
 #));
@@ -53,7 +53,7 @@ $rds = new Aws\Rds\RdsClient([
     'region'  => 'us-east-1'
 ]);
 $result = $rds->describeDBInstances([
-    'DBInstanceIdentifier' => 'mp1-jrh',
+    'DBInstanceIdentifier' => 'MP1',
     #'Filters' => [
     #    [
     #        'Name' => '<string>', // REQUIRED
@@ -67,41 +67,40 @@ $result = $rds->describeDBInstances([
 $endpoint = $result['DBInstances']['Endpoint']['Address']
     echo "============\n". $endpoint . "================";^M
 //echo "begin database";^M
-$link = mysqli_connect($endpoint,"controller","letmein888","customerrecords") or die("Error " . mysqli_error($link));
+$link = mysqli_connect($endpoint,"nandini90","nandini90","MP1") or die("Error " . mysqli_error($link));
 /* check connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
     exit();
 }
 /* Prepared statement, stage 1: prepare */
-if (!($stmt = $link->prepare("INSERT INTO items (id, email,phone,filename,s3rawurl,s3finishedurl,status,issubscribed) VALUES (NULL,?,?,?,?,?,?,?)"))) {
+if (!($stmt = $link->prepare("INSERT INTO Project1 (uname,phoneforsms,raws3url,finisheds3url,jpegfilename,state,datetime) VALUES (NULL,?,?,?,?,?,?,?)"))) {
     echo "Prepare failed: (" . $link->errno . ") " . $link->error;
 }
+$uname="Nandini";
 $email = $_POST['useremail'];
-$phone = $_POST['phone'];
-$s3rawurl = $url; //  $result['ObjectURL']; from above
-$filename = basename($_FILES['userfile']['name']);
-$s3finishedurl = "none";
-$status =0;
-$issubscribed=0;
-$stmt->bind_param("sssssii",$email,$phone,$filename,$s3rawurl,$s3finishedurl,$status,$issubscribed);
+$phoneforsms = $_POST['phone'];
+$raws3url = $url; //  $result['ObjectURL']; from above
+$finisheds3url = "none";
+$jpegfilename = basename($_FILES['userfile']['name']);
+$state=0;
+$datetime=now();
+$stmt->bind_param($uname,$email,$phoneforsms,$raws3url,$finisheds3url,$jpegfilename,$state,$datetime);
 if (!$stmt->execute()) {
     echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 }
 printf("%d Row inserted.\n", $stmt->affected_rows);
 /* explicit close recommended */
 $stmt->close();
-$link->real_query("SELECT * FROM items");
+$link->real_query("SELECT * FROM Project1");
 $res = $link->use_result();
 echo "Result set order...\n";
 while ($row = $res->fetch_assoc()) {
-    echo $row['id'] . " " . $row['email']. " " . $row['phone'];
+    echo $row['id'] . " " . $row['email']. " " . $row['phoneforsms'];
 }
 $link->close();
 //add code to detect if subscribed to SNS topic 
 //if not subscribed then subscribe the user and UPDATE the column in the database with a new value 0 to 1 so that then each time you don't have to resubscribe them
 // add code to generate SQS Message with a value of the ID returned from the most recent inserted piece of work
 //  Add code to update database to UPDATE status column to 1 (in progress)
-?>
-
-    
+?>   
